@@ -1,0 +1,81 @@
+# =========================
+# Node / npm
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+
+# =========================
+# Build outputs
+# =========================
+dist/
+build/
+.out/
+.next/
+coverage/
+
+# =========================
+# TypeScript
+# =========================
+*.tsbuildinfo
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+
+# =========================
+# Environment files
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Temporary files
+# =========================
+tmp/
+temp/
+.cache/
+
+# =========================
+# React / Vite
+# =========================
+node_modules/.vite
+vite.config.ts.timestamp-*
+
+# =========================
+# Next.js
+# =========================
+.next/
+.vercel/
+
+# =========================
+# Testing
+# =========================
+jest.config.ts.timestamp-*
+coverage/
+
+# =========================
+# Misc
+# =========================
+*.tgz
+*.tar.gz

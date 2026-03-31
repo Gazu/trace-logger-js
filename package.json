@@ -1,0 +1,19 @@
+{
+  "name": "logger-universal-project",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build -ws",
+    "build:packages": "npm run build -w @smb-tech/logger-core && npm run build -w @smb-tech/logger-node && npm run build -w @smb-tech/logger-react",
+    "dev:backend-express": "npm run build:packages && npm run dev -w @smb-tech/backend-express",
+    "dev:backend-next": "npm run build:packages && npm run dev -w @smb-tech/backend-next",
+    "dev:react": "npm run build:packages && npm run dev -w @smb-tech/react-demo"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}

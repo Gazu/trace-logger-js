@@ -1,0 +1,20 @@
+{
+  "name": "@smb-tech/backend-express",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@smb-tech/logger-node": "1.0.0",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
