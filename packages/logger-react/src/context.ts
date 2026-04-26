@@ -6,8 +6,11 @@ export interface BrowserContextOptions {
   traceId?: string;
   requestId?: string;
   spanId?: string;
+  parentSpanId?: string;
   mdc?: Record<string, string>;
 }
+
+const TRACE_KEYS = new Set(['requestId', 'traceId', 'spanId', 'parentSpanId']);
 
 function createHexId(bytes: number): string {
   const data = new Uint8Array(bytes);
@@ -26,9 +29,37 @@ export class BrowserTraceContextFactory {
         requestId,
         traceId,
         spanId,
+        ...(options?.parentSpanId ? { parentSpanId: options.parentSpanId } : {}),
         ...(options?.mdc ?? {})
       }
     };
+  }
+
+  static createExecution(options?: BrowserContextOptions): BrowserTraceContext {
+    const inheritedMdc = BrowserContextStore.getPersistentMdc();
+
+    return this.create({
+      ...options,
+      mdc: {
+        ...inheritedMdc,
+        ...(options?.mdc ?? {})
+      }
+    });
+  }
+
+  static createChildExecution(options?: BrowserContextOptions): BrowserTraceContext {
+    const currentMdc = BrowserContextStore.getMdc();
+    const inheritedMdc = BrowserContextStore.getPersistentMdc();
+
+    return this.create({
+      ...options,
+      traceId: options?.traceId ?? currentMdc.traceId,
+      parentSpanId: options?.parentSpanId ?? currentMdc.spanId,
+      mdc: {
+        ...inheritedMdc,
+        ...(options?.mdc ?? {})
+      }
+    });
   }
 }
 
@@ -45,6 +76,14 @@ export class BrowserContextStore {
 
   static getMdc(): Record<string, string> {
     return this.context?.mdc ?? {};
+  }
+
+  static getPersistentMdc(): Record<string, string> {
+    const mdc = this.getMdc();
+
+    return Object.fromEntries(
+      Object.entries(mdc).filter(([key]) => !TRACE_KEYS.has(key))
+    );
   }
 
   static setMdc(key: string, value: string): void {

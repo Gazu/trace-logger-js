@@ -1,11 +1,15 @@
-import { RequestContextStore, runWithNodeContext } from '@smb-tech/logger-node';
+import {
+  RequestContextStore,
+  getNextTraceResponseHeaders,
+  withNextRequestContext
+} from '@smb-tech/logger-node';
 import { logger } from '../../lib/logger';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const ALLOWED_ORIGIN = 'http://localhost:5173';
-const ALLOWED_HEADERS = 'Content-Type, Authorization, x-request-id, X-B3-TraceId, X-B3-SpanId';
+const ALLOWED_HEADERS = 'Content-Type, Authorization, x-request-id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId';
 const ALLOWED_METHODS = 'GET, OPTIONS';
 
 function buildCorsHeaders(extra?: Record<string, string>) {
@@ -25,9 +29,7 @@ export async function OPTIONS(): Promise<Response> {
 }
 
 export async function GET(request: Request): Promise<Response> {
-  const incomingTraceId = request.headers.get('x-b3-traceid') ?? undefined;
-
-  return runWithNodeContext(() => {
+  return withNextRequestContext(request, () => {
     logger.info((event) => {
       event
         .message('Health check executed')
@@ -41,17 +43,18 @@ export async function GET(request: Request): Promise<Response> {
     return new Response(
       JSON.stringify({
         status: 'ok',
-        traceId: mdc.traceId
+        traceId: mdc.traceId,
+        spanId: mdc.spanId,
+        parentSpanId: mdc.parentSpanId
       }),
       {
         status: 200,
-        headers: buildCorsHeaders({
-          'content-type': 'application/json',
-          'x-request-id': mdc.requestId ?? '',
-          'x-b3-traceid': mdc.traceId ?? '',
-          'x-span-id': mdc.spanId ?? ''
-        })
+        headers: buildCorsHeaders(
+          getNextTraceResponseHeaders({
+            'content-type': 'application/json'
+          })
+        )
       }
     );
-  }, { traceId: incomingTraceId });
+  });
 }

@@ -3,6 +3,30 @@
   "version": "1.0.0",
   "description": "Node.js adapter for structured logging with AsyncLocalStorage context propagation",
   "license": "MIT",
+  "author": {
+    "name": "smb-tech",
+    "url": "https://smb-tech.cl"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gazu/trace-logger-js.git",
+    "directory": "packages/logger-node"
+  },
+  "bugs": {
+    "url": "https://github.com/Gazu/trace-logger-js/issues"
+  },
+  "keywords": [
+    "logging",
+    "logger",
+    "structured-logging",
+    "json-logging",
+    "tracing",
+    "distributed-tracing",
+    "nodejs",
+    "express",
+    "nextjs",
+    "async-local-storage"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,7 +41,10 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build && npm pack --dry-run"
   },
   "dependencies": {
     "@smb-tech/logger-core": "1.0.0"

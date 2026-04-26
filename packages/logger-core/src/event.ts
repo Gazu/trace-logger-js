@@ -5,7 +5,7 @@ export class LogEvent {
   private dataValue: Record<string, unknown> = {};
   private tagsValue = new Set<string>();
   private typeValue: EventType = 'APP';
-  private errorValue?: Error;
+  private errorValue?: unknown;
   private sensitiveValue = false;
 
   type(type: EventType): this {
@@ -34,7 +34,7 @@ export class LogEvent {
     return this;
   }
 
-  error(error: Error): this {
+  error(error: unknown): this {
     this.errorValue = error;
     return this;
   }

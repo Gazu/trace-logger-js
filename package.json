@@ -7,8 +7,14 @@
     "apps/*"
   ],
   "scripts": {
+    "clean": "npm run clean -ws",
     "build": "npm run build -ws",
     "build:packages": "npm run build -w @smb-tech/logger-core && npm run build -w @smb-tech/logger-node && npm run build -w @smb-tech/logger-react",
+    "test": "npm run test -w @smb-tech/logger-core",
+    "audit:packages": "npm audit --omit=dev -w @smb-tech/logger-core -w @smb-tech/logger-node -w @smb-tech/logger-react",
+    "pack:dry-run": "npm --cache /tmp/trace-logger-npm-cache pack --dry-run -w @smb-tech/logger-core -w @smb-tech/logger-node -w @smb-tech/logger-react",
+    "publish:dry-run": "npm --cache /tmp/trace-logger-npm-cache publish --dry-run -w @smb-tech/logger-core -w @smb-tech/logger-node -w @smb-tech/logger-react",
+    "release:check": "npm run test && npm run build && npm run pack:dry-run && npm run publish:dry-run && npm run audit:packages",
     "dev:backend-express": "npm run build:packages && npm run dev -w @smb-tech/backend-express",
     "dev:backend-next": "npm run build:packages && npm run dev -w @smb-tech/backend-next",
     "dev:react": "npm run build:packages && npm run dev -w @smb-tech/react-demo"

@@ -12,6 +12,7 @@ package-lock.json
 # Build outputs
 # =========================
 dist/
+dist-test/
 build/
 .out/
 .next/

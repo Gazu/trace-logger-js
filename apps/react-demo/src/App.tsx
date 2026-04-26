@@ -1,6 +1,11 @@
 import { useMemo, useState } from 'react';
-import { BrowserContextStore, BrowserTraceContextFactory, ReactLogger } from '@smb-tech/logger-react';
-import { getHealth } from './api/api';
+import {
+  BrowserContextStore,
+  BrowserTraceContextFactory,
+  ReactLogger,
+  startHttpExecutionContext
+} from '@smb-tech/logger-react';
+import { getHealth, getUpstreamHealth } from './api/api';
 
 const logger = ReactLogger.get('ReactDemoApp');
 
@@ -41,13 +46,19 @@ export function App() {
 
   const callBackend = async () => {
     try {
-      BrowserContextStore.setMdc('flow', 'frontend-to-backend');
+      const context = startHttpExecutionContext({
+        mdc: {
+          flow: 'frontend-to-backend'
+        }
+      });
 
       logger.info((event) => {
         event
           .message('Calling backend /health')
           .tag('http')
-          .with('url', 'http://localhost:3000/health');
+          .with('url', 'http://localhost:3000/health')
+          .with('traceId', context.mdc.traceId)
+          .with('spanId', context.mdc.spanId);
       });
 
       const response = await getHealth();
@@ -74,6 +85,45 @@ export function App() {
     }
   };
 
+  const callBackendChain = async () => {
+    try {
+      const context = startHttpExecutionContext({
+        mdc: {
+          flow: 'frontend-to-express-to-next'
+        }
+      });
+
+      logger.info((event) => {
+        event
+          .message('Calling backend /health/upstream')
+          .tag('http')
+          .with('url', 'http://localhost:3000/health/upstream')
+          .with('traceId', context.mdc.traceId)
+          .with('spanId', context.mdc.spanId);
+      });
+
+      const response = await getUpstreamHealth();
+
+      logger.info((event) => {
+        event
+          .message('Backend chain response received')
+          .tag('http')
+          .with('payload', response);
+      });
+
+      setResponseText(JSON.stringify(response, null, 2));
+    } catch (error) {
+      logger.error((event) => {
+        event
+          .message('Backend chain call failed')
+          .tag('http_error')
+          .error(error instanceof Error ? error : new Error('Unknown browser error'));
+      });
+
+      setResponseText(String(error));
+    }
+  };
+
   return (
     <main style={{ fontFamily: 'Arial, sans-serif', padding: 24, maxWidth: 840, margin: '0 auto' }}>
       <h1>React logger demo</h1>
@@ -83,6 +133,7 @@ export function App() {
         <button onClick={refreshContext}>New browser context</button>
         <button onClick={handleLog}>Log React event</button>
         <button onClick={callBackend}>Call backend /health</button>
+        <button onClick={callBackendChain}>Call backend chain</button>
       </section>
 
       <section style={{ marginBottom: 24 }}>

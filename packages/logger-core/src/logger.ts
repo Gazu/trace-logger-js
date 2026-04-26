@@ -1,3 +1,6 @@
+import { LoggerConfiguration } from './config.js';
+import { sanitizeRecord } from './data.js';
+import { serializeError } from './error.js';
 import { LogEvent } from './event.js';
 import type {
   LogContextAccessor,
@@ -70,17 +73,55 @@ export class Logger {
       return;
     }
 
-    const event = new LogEvent();
-    builder(event);
+    if (!LoggerConfiguration.isEnabled(level)) {
+      return;
+    }
 
-    const payload = this.toPayload(level, event);
-    this.sink.dispatch(JSON.stringify(payload), level);
+    if (!LoggerConfiguration.shouldSample(level)) {
+      return;
+    }
+
+    const event = new LogEvent();
+
+    try {
+      builder(event);
+    } catch (error) {
+      LoggerConfiguration.reportInternalError(error, {
+        contextName: this.contextName,
+        level,
+        phase: 'builder'
+      });
+      return;
+    }
+
+    let payload: LogPayload;
+
+    try {
+      payload = this.toPayload(level, event);
+    } catch (error) {
+      LoggerConfiguration.reportInternalError(error, {
+        contextName: this.contextName,
+        level,
+        phase: 'payload'
+      });
+      return;
+    }
+
+    try {
+      this.sink.dispatch(JSON.stringify(payload), level);
+    } catch (error) {
+      LoggerConfiguration.reportInternalError(error, {
+        contextName: this.contextName,
+        level,
+        phase: 'dispatch'
+      });
+    }
   }
 
   private toPayload(level: LogLevel, event: LogEvent): LogPayload {
     const normalized = event.toJSON();
     const error = normalized.error;
-    const mdc = this.contextAccessor.getMdc();
+    const mdc = sanitizeMdc(this.contextAccessor.getMdc());
 
     return {
       ts: new Date().toISOString(),
@@ -91,16 +132,21 @@ export class Logger {
       pii: normalized.pii,
       thread: this.runtimeDetailsProvider.getThreadLabel(),
       mdc,
-      data: normalized.data,
+      data: sanitizeRecord(normalized.data),
       tags: normalized.tags,
-      exception: error
-        ? {
-            message: error.message,
-            class: error.name,
-            stack: error.stack,
-            cause: error.cause instanceof Error ? error.cause.message : undefined
-          }
-        : {}
+      exception: serializeError(error)
     };
   }
+}
+
+function sanitizeMdc(mdc: Record<string, string>): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(mdc).map(([key, value]) => {
+      if (LoggerConfiguration.isSensitiveKey(key)) {
+        return [key, String(LoggerConfiguration.redactValue(key, value))];
+      }
+
+      return [key, value];
+    })
+  );
 }

@@ -5,8 +5,10 @@ export type EventType = 'APP' | 'ERROR' | 'TRACK' | 'SECURITY' | 'AUDIT' | 'ACCE
 export interface ThrowablePayload {
   message?: string;
   class: string;
+  code?: string;
   stack?: string;
-  cause?: string;
+  metadata?: Record<string, unknown>;
+  cause?: ThrowablePayload;
 }
 
 export interface LogPayload {
@@ -29,7 +31,7 @@ export interface NormalizedLogEvent {
   data: Record<string, unknown>;
   tags: string[];
   pii: boolean;
-  error?: Error;
+  error?: unknown;
 }
 
 export interface LogContextAccessor {
