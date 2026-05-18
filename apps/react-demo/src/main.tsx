@@ -7,6 +7,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <LoggingProvider
       level={import.meta.env.VITE_LOG_LEVEL}
+      timezone={import.meta.env.VITE_LOGGER_TIMEZONE}
       sensitiveKeys={['authorization', 'password', 'token']}
     >
       <App />

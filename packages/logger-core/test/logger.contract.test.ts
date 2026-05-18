@@ -77,6 +77,62 @@ test('emits the stable v1 log payload contract', () => {
   assert.deepEqual(payload.exception, {});
 });
 
+test('formats timestamps in UTC by default', () => {
+  LoggerConfiguration.configure({
+    level: 'INFO',
+    timezone: undefined
+  });
+
+  assert.equal(
+    LoggerConfiguration.formatTimestamp(new Date('2026-05-18T14:30:12.345Z')),
+    '2026-05-18T14:30:12.345Z'
+  );
+});
+
+test('formats timestamps with the configured timezone offset', () => {
+  LoggerConfiguration.configure({
+    level: 'INFO',
+    timezone: 'America/Santiago'
+  });
+
+  assert.equal(
+    LoggerConfiguration.formatTimestamp(new Date('2026-05-18T14:30:12.345Z')),
+    '2026-05-18T10:30:12.345-04:00'
+  );
+
+  LoggerConfiguration.configure({
+    level: 'INFO',
+    timezone: 'UTC'
+  });
+});
+
+test('falls back to UTC when the configured timezone is invalid', () => {
+  const originalConsoleError = console.error;
+  const errors: string[] = [];
+  console.error = (message?: unknown) => {
+    errors.push(String(message));
+  };
+
+  try {
+    LoggerConfiguration.configure({
+      level: 'INFO',
+      timezone: 'Invalid/Timezone'
+    });
+  } finally {
+    console.error = originalConsoleError;
+  }
+
+  assert.equal(LoggerConfiguration.getTimezone(), 'UTC');
+  assert.equal(
+    LoggerConfiguration.formatTimestamp(new Date('2026-05-18T14:30:12.345Z')),
+    '2026-05-18T14:30:12.345Z'
+  );
+  assert.equal(
+    JSON.parse(errors[0]).msg,
+    'Invalid LOGGER_TIMEZONE "Invalid/Timezone"; falling back to UTC'
+  );
+});
+
 test('serializes errors with code, metadata, and cause safely', () => {
   const sink = new MemorySink();
 

@@ -5,6 +5,7 @@ const internalMetricsEnabled = parseBoolean(process.env.LOGGER_INTERNAL_METRICS_
 
 LoggerConfiguration.configure({
   level: process.env.LOG_LEVEL,
+  timezone: process.env.LOGGER_TIMEZONE,
   sampleRate: parseSampleRate(process.env.LOGGER_SAMPLE_RATE),
   errorStackEnabled: parseBoolean(process.env.LOGGER_ERROR_STACK_ENABLED, true),
   sensitiveKeys: [

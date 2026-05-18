@@ -22,6 +22,7 @@ import { NodeLogSink } from '@smb-tech/logger-node';
 
 LoggerConfiguration.configure({
   level: process.env.LOG_LEVEL,
+  timezone: process.env.LOGGER_TIMEZONE,
   sampleRate: Number(process.env.LOGGER_SAMPLE_RATE ?? 1),
   sensitiveKeys: ['authorization', 'cookie', 'password', 'token']
 });
@@ -40,6 +41,7 @@ Recommended environment variables:
 
 ```env
 LOG_LEVEL=INFO
+LOGGER_TIMEZONE=UTC
 LOGGER_SAMPLE_RATE=1
 LOGGER_INTERNAL_METRICS_ENABLED=false
 LOGGER_MAX_QUEUE_SIZE=10000

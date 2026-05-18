@@ -6,17 +6,20 @@ import { BrowserContextStore, BrowserTraceContextFactory } from './context.js';
 interface LoggingProviderProps {
   children: ReactNode;
   level?: string;
+  timezone?: string;
   sensitiveKeys?: string[];
 }
 
 export function LoggingProvider({
   children,
   level,
+  timezone,
   sensitiveKeys
 }: LoggingProviderProps) {
   useEffect(() => {
     LoggerConfiguration.configure({
       level,
+      timezone,
       sensitiveKeys
     });
 

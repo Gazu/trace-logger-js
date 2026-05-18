@@ -1,6 +1,6 @@
 {
   "name": "@smb-tech/logger-core",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Core library for structured logging, events, and serialization",
   "license": "MIT",
   "author": {

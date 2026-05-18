@@ -6,6 +6,7 @@ import { NodeLogger, NodeLogSink } from '@smb-tech/logger-node';
 const internalMetricsEnabled = parseBoolean(process.env.LOGGER_INTERNAL_METRICS_ENABLED);
 const configuredLevel = LoggerConfiguration.configure({
   level: process.env.LOG_LEVEL,
+  timezone: process.env.LOGGER_TIMEZONE,
   sampleRate: parseSampleRate(process.env.LOGGER_SAMPLE_RATE),
   errorStackEnabled: parseBoolean(process.env.LOGGER_ERROR_STACK_ENABLED, true),
   sensitiveKeys: [

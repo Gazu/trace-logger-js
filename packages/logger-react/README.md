@@ -26,6 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <LoggingProvider
       level={import.meta.env.VITE_LOG_LEVEL}
+      timezone={import.meta.env.VITE_LOGGER_TIMEZONE}
       sensitiveKeys={['authorization', 'password', 'token']}
     >
       <App />
@@ -38,7 +39,10 @@ For Vite, use:
 
 ```env
 VITE_LOG_LEVEL=INFO
+VITE_LOGGER_TIMEZONE=UTC
 ```
+
+`timezone` formats the single `ts` field with the configured IANA timezone. Leave it unset, or set it to `UTC`, to keep the default UTC `ts` format.
 
 ## Browser Logging
 

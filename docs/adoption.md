@@ -28,6 +28,7 @@ Backend `.env`:
 
 ```env
 LOG_LEVEL=INFO
+LOGGER_TIMEZONE=UTC
 LOGGER_SAMPLE_RATE=1
 LOGGER_ERROR_STACK_ENABLED=false
 LOGGER_INTERNAL_METRICS_ENABLED=false
@@ -41,6 +42,7 @@ React `.env` for Vite:
 
 ```env
 VITE_LOG_LEVEL=INFO
+VITE_LOGGER_TIMEZONE=UTC
 ```
 
 ## 3. Bootstrap a Node Service
@@ -53,6 +55,7 @@ import { NodeLogSink, NodeLogger } from '@smb-tech/logger-node';
 
 LoggerConfiguration.configure({
   level: process.env.LOG_LEVEL,
+  timezone: process.env.LOGGER_TIMEZONE,
   sampleRate: Number(process.env.LOGGER_SAMPLE_RATE ?? 1),
   errorStackEnabled: process.env.LOGGER_ERROR_STACK_ENABLED !== 'false',
   sensitiveKeys: ['authorization', 'cookie', 'password', 'token']

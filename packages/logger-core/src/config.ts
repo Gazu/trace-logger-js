@@ -30,6 +30,7 @@ const DEFAULT_SENSITIVE_KEYS = [
   'client_secret'
 ];
 const DEFAULT_MAX_REDACTION_INPUT_LENGTH = 4096;
+const DEFAULT_TIMEZONE = 'UTC';
 
 export interface SensitiveKeyMaskRule {
   key?: string;
@@ -48,6 +49,7 @@ export interface LoggerInternalErrorContext {
 
 export interface LoggerRuntimeOptions {
   level?: string;
+  timezone?: string;
   sensitiveKeys?: SensitiveKeyConfig[];
   redactPlaceholder?: string;
   errorStackEnabled?: boolean;
@@ -61,6 +63,7 @@ export interface LoggerRuntimeSnapshot {
   minLevel: LogLevel;
   redactPlaceholder: string;
   errorStackEnabled: boolean;
+  timezone: string;
   maxRedactionInputLength: number;
   sensitiveKeys: string[];
   sensitivePaths: string[];
@@ -73,6 +76,7 @@ export class LoggerConfiguration {
   private static minLevel: LogLevel = 'INFO';
   private static redactPlaceholder = '[REDACTED]';
   private static errorStackEnabled = true;
+  private static timezone = DEFAULT_TIMEZONE;
   private static maxRedactionInputLength = DEFAULT_MAX_REDACTION_INPUT_LENGTH;
   private static sensitiveKeys = new Set(DEFAULT_SENSITIVE_KEYS.map(normalizeKey));
   private static sensitiveKeyRules = new Map<string, SensitiveKeyMaskRule>();
@@ -86,7 +90,7 @@ export class LoggerConfiguration {
 
     console.error(
       JSON.stringify({
-        ts: new Date().toISOString(),
+        ts: LoggerConfiguration.formatTimestamp(),
         type: 'LOGGER_INTERNAL_ERROR',
         msg: 'Logger internal failure',
         context
@@ -111,6 +115,10 @@ export class LoggerConfiguration {
 
     if (typeof options.errorStackEnabled === 'boolean') {
       this.errorStackEnabled = options.errorStackEnabled;
+    }
+
+    if ('timezone' in options) {
+      this.configureTimezone(options.timezone);
     }
 
     if (typeof options.maxRedactionInputLength === 'number' && Number.isFinite(options.maxRedactionInputLength)) {
@@ -148,6 +156,18 @@ export class LoggerConfiguration {
     return this.errorStackEnabled;
   }
 
+  static getTimezone(): string {
+    return this.timezone;
+  }
+
+  static formatTimestamp(date = new Date()): string {
+    if (this.timezone === DEFAULT_TIMEZONE) {
+      return date.toISOString();
+    }
+
+    return formatDateInTimezone(date, this.timezone);
+  }
+
   static getMaxRedactionInputLength(): number {
     return this.maxRedactionInputLength;
   }
@@ -172,6 +192,7 @@ export class LoggerConfiguration {
       minLevel: this.minLevel,
       redactPlaceholder: this.redactPlaceholder,
       errorStackEnabled: this.errorStackEnabled,
+      timezone: this.timezone,
       maxRedactionInputLength: this.maxRedactionInputLength,
       sensitiveKeys: this.getSensitiveKeys(),
       sensitivePaths: this.getSensitivePaths(),
@@ -277,6 +298,24 @@ export class LoggerConfiguration {
     });
   }
 
+  private static configureTimezone(value?: string): void {
+    const timezone = value?.trim() || DEFAULT_TIMEZONE;
+
+    if (timezone === DEFAULT_TIMEZONE || isValidTimezone(timezone)) {
+      this.timezone = timezone;
+      return;
+    }
+
+    this.timezone = DEFAULT_TIMEZONE;
+    console.error(
+      JSON.stringify({
+        ts: new Date().toISOString(),
+        type: 'LOGGER_INTERNAL_WARNING',
+        msg: `Invalid LOGGER_TIMEZONE "${timezone}"; falling back to UTC`
+      })
+    );
+  }
+
   private static applyMaskRule(value: string, rule: SensitiveKeyMaskRule): string {
     if (!rule.pattern) {
       return value;
@@ -313,6 +352,44 @@ function clampSampleRate(value: number): number {
   }
 
   return value;
+}
+
+function isValidTimezone(timezone: string): boolean {
+  try {
+    Intl.DateTimeFormat('en-US', { timeZone: timezone }).format(new Date());
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function formatDateInTimezone(date: Date, timezone: string): string {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+    timeZoneName: 'longOffset'
+  });
+  const parts = Object.fromEntries(
+    formatter.formatToParts(date).map((part) => [part.type, part.value])
+  );
+  const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
+  const offset = normalizeOffset(parts.timeZoneName);
+
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}.${milliseconds}${offset}`;
+}
+
+function normalizeOffset(value?: string): string {
+  if (!value || value === 'GMT') {
+    return 'Z';
+  }
+
+  return value.replace('GMT', '');
 }
 
 function validateSensitiveKeyMaskRule(rule: SensitiveKeyMaskRule): void {

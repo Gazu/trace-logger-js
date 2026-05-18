@@ -124,7 +124,7 @@ export class Logger {
     const mdc = sanitizeMdc(this.contextAccessor.getMdc());
 
     return {
-      ts: new Date().toISOString(),
+      ts: LoggerConfiguration.formatTimestamp(),
       uuid: mdc.requestId ?? this.runtimeDetailsProvider.fallbackId(),
       type: normalized.type === 'APP' ? level : normalized.type,
       msg: normalized.msg,

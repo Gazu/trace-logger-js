@@ -28,6 +28,7 @@ import { Logger, LoggerConfiguration } from '@smb-tech/logger-core';
 
 LoggerConfiguration.configure({
   level: process.env.LOG_LEVEL,
+  timezone: process.env.LOGGER_TIMEZONE,
   sampleRate: 1,
   sensitiveKeys: ['authorization', 'password', 'token']
 });
@@ -68,6 +69,7 @@ Most projects should not instantiate `Logger` manually. Runtime packages provide
 ```ts
 LoggerConfiguration.configure({
   level: 'INFO',
+  timezone: 'UTC',
   sampleRate: 1,
   sampledLevels: ['TRACE', 'DEBUG', 'INFO', 'TRACK', 'METRIC'],
   errorStackEnabled: true,
@@ -83,6 +85,7 @@ LoggerConfiguration.configure({
 Options:
 
 - `level`: minimum emitted level. Defaults to `INFO`.
+- `timezone`: IANA timezone used to format `ts`. Defaults to `UTC`; invalid values fall back to `UTC` with an internal warning.
 - `sampleRate`: number from `0` to `1`. Defaults to `1`.
 - `sampledLevels`: levels affected by sampling.
 - `sensitiveKeys`: extra keys or per-key masking rules. Default sensitive keys are always included.
