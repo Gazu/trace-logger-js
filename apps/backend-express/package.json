@@ -1,6 +1,6 @@
 {
   "name": "@smb-tech/backend-express",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,7 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
-    "@smb-tech/logger-node": "1.0.2",
+    "@smb-tech/logger-node": "1.0.3",
     "express": "^4.21.2"
   },
   "devDependencies": {

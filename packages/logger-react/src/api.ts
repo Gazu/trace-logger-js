@@ -28,7 +28,7 @@ export function getTraceHeaders(context?: BrowserTraceContext): Record<string, s
   const headers: Record<string, string> = {};
 
   if (mdc.requestId) {
-    headers['x-request-id'] = mdc.requestId;
+    headers['X-Request-Id'] = mdc.requestId;
   }
 
   if (mdc.traceId) {

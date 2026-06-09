@@ -1,6 +1,6 @@
 {
   "name": "@smb-tech/backend-next",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,7 @@
     "start": "next start -p 3001"
   },
   "dependencies": {
-    "@smb-tech/logger-node": "1.0.2",
+    "@smb-tech/logger-node": "1.0.3",
     "next": "^15.5.15",
     "react": "18.3.1",
     "react-dom": "18.3.1"

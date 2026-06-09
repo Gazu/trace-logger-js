@@ -214,7 +214,7 @@ Logging:
 
 The browser helpers send:
 
-- `x-request-id`
+- `X-Request-Id`
 - `X-B3-TraceId`
 - `X-B3-SpanId`
 - `X-B3-ParentSpanId`

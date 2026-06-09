@@ -9,7 +9,7 @@ export interface ExpressTraceMiddlewareOptions {
 }
 
 const DEFAULT_OPTIONS: Required<ExpressTraceMiddlewareOptions> = {
-  requestIdHeader: 'x-request-id',
+  requestIdHeader: 'X-Request-Id',
   traceIdHeader: 'x-b3-traceid',
   spanIdHeader: 'x-b3-spanid',
   parentSpanIdHeader: 'x-b3-parentspanid'
@@ -41,7 +41,7 @@ export function applyTraceHeadersToNodeResponse(
   mdc: Record<string, string>
 ): void {
   if (mdc.requestId) {
-    response.setHeader('x-request-id', mdc.requestId);
+    response.setHeader('X-Request-Id', mdc.requestId);
   }
 
   if (mdc.traceId) {

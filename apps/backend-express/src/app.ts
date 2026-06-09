@@ -7,8 +7,8 @@ export function createApp() {
   const app = express();
   const logger = NodeLogger.get('HttpServer');
   const allowedOrigin = 'http://localhost:5173';
-  const allowedHeaders = 'Content-Type, Authorization, x-request-id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId';
-  const exposedHeaders = 'x-request-id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId';
+  const allowedHeaders = 'Content-Type, Authorization, X-Request-Id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId';
+  const exposedHeaders = 'X-Request-Id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId';
 
   app.use(express.json());
   app.use(requestTraceMiddleware);

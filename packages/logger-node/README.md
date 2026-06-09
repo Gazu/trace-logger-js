@@ -88,7 +88,7 @@ app.get('/health', (_req, res) => {
 
 `createExpressTraceMiddleware()` reads:
 
-- `x-request-id`
+- `X-Request-Id`
 - `x-b3-traceid`
 - `x-b3-spanid`
 - `x-b3-parentspanid`
@@ -99,7 +99,7 @@ Custom header names:
 
 ```ts
 app.use(createExpressTraceMiddleware({
-  requestIdHeader: 'x-request-id',
+  requestIdHeader: 'X-Request-Id',
   traceIdHeader: 'x-b3-traceid',
   spanIdHeader: 'x-b3-spanid',
   parentSpanIdHeader: 'x-b3-parentspanid'
@@ -351,11 +351,11 @@ Metrics include:
 If a browser sends tracing headers to an Express or Next backend, allow:
 
 ```text
-Content-Type, Authorization, x-request-id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId
+Content-Type, Authorization, X-Request-Id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId
 ```
 
 Expose:
 
 ```text
-x-request-id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId
+X-Request-Id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId
 ```

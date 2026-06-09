@@ -21,7 +21,7 @@ interface NestCallHandlerLike<T = unknown> {
 }
 
 const DEFAULT_OPTIONS: Required<Pick<NestTraceOptions, 'requestIdHeader' | 'traceIdHeader' | 'spanIdHeader' | 'parentSpanIdHeader'>> = {
-  requestIdHeader: 'x-request-id',
+  requestIdHeader: 'X-Request-Id',
   traceIdHeader: 'x-b3-traceid',
   spanIdHeader: 'x-b3-spanid',
   parentSpanIdHeader: 'x-b3-parentspanid'

@@ -9,7 +9,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const ALLOWED_ORIGIN = 'http://localhost:5173';
-const ALLOWED_HEADERS = 'Content-Type, Authorization, x-request-id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId';
+const ALLOWED_HEADERS = 'Content-Type, Authorization, X-Request-Id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId';
 const ALLOWED_METHODS = 'GET, OPTIONS';
 
 function buildCorsHeaders(extra?: Record<string, string>) {

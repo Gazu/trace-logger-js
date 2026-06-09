@@ -211,13 +211,13 @@ api.interceptors.request.use((config) => {
 If a browser calls your backend with tracing headers, allow:
 
 ```text
-Content-Type, Authorization, x-request-id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId
+Content-Type, Authorization, X-Request-Id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId
 ```
 
 Expose:
 
 ```text
-x-request-id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId
+X-Request-Id, X-B3-TraceId, X-B3-SpanId, X-B3-ParentSpanId
 ```
 
 ## 10. Add Internal Metrics

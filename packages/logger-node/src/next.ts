@@ -8,7 +8,7 @@ export interface NextTraceOptions extends NodeContextOptions {
 }
 
 const DEFAULT_OPTIONS: Required<Pick<NextTraceOptions, 'requestIdHeader' | 'traceIdHeader' | 'spanIdHeader' | 'parentSpanIdHeader'>> = {
-  requestIdHeader: 'x-request-id',
+  requestIdHeader: 'X-Request-Id',
   traceIdHeader: 'x-b3-traceid',
   spanIdHeader: 'x-b3-spanid',
   parentSpanIdHeader: 'x-b3-parentspanid'
@@ -42,7 +42,7 @@ export function getNextTraceResponseHeaders(
   const mdc = RequestContextStore.getMdc();
 
   return {
-    ...(mdc.requestId ? { 'x-request-id': mdc.requestId } : {}),
+    ...(mdc.requestId ? { 'X-Request-Id': mdc.requestId } : {}),
     ...(mdc.traceId ? { 'x-b3-traceid': mdc.traceId } : {}),
     ...(mdc.spanId ? { 'x-b3-spanid': mdc.spanId } : {}),
     ...(mdc.parentSpanId ? { 'x-b3-parentspanid': mdc.parentSpanId } : {}),
